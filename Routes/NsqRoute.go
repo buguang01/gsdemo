@@ -5,13 +5,14 @@ import (
 	"GameService/Events/NsqEvents"
 	"GameService/Models"
 	"GameService/Service"
+	"context"
 
 	"github.com/buguang01/Logger"
 	"github.com/buguang01/bige/event"
 )
 
 func init() {
-	NsqRouteList = make(map[int]Models.NsqdLogicHander, 100)
+	NsqRouteList = make(map[int]Models.NsqdLogicHander)
 
 	NsqRouteList[ActionCode.Nsqd_ListenUser] = NsqEvents.Nsqd_ListenUser
 }
@@ -37,9 +38,11 @@ func NsqdHander(msg event.INsqdMessage) {
 		// logicmd := NsqLogic.NewLogicRoute(hander, msg)
 		logicmd := msg.(*Models.NsqEventBase)
 		// logicmd.MemberID = logicmd.Data.GetMemberID()
-		logicmd.NsqdLogicHander = hander
-		Service.LogicEx.AddMsg(logicmd)
-
+		// logicmd.NsqdLogicHander = hander
+		// Service.LogicEx.AddMsg(logicmd)
+		Service.GoTreandEx.Try(func(ctx context.Context) {
+			hander(logicmd)
+		}, nil, nil)
 		/*
 			正如你看到的那样，虽然我们在nsq协程上收到了消息，但是会丢到对应的logic协程上运行
 			因为这个方法，会因为收到一个新消息然后就会开一个协程进行处理

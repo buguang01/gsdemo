@@ -13,14 +13,14 @@ import (
 type NsqdLogicHander func(lg *NsqEventBase)
 
 type NsqEventBase struct {
-	SendID          int           //发信息用户ID
-	SendSID         string        //发信息服务器（回复用的信息）
-	ActionID        int           //消息号
-	Topic           string        //处理服务器
-	MemberID        int           //处理用户ID
-	Step            int           //处理步骤
-	Data            event.JsonMap //`json:"omitempty"` //消息数据
-	NsqdLogicHander `json:"-"`
+	SendID   int           //发信息用户ID
+	SendSID  string        //发信息服务器（回复用的信息）
+	ActionID int           //消息号
+	Topic    string        //处理服务器
+	MemberID int           //处理用户ID
+	Step     int           //处理步骤
+	Data     event.JsonMap //`json:"omitempty"` //消息数据
+	// NsqdLogicHander `json:"-"`
 }
 
 func NewNsqdMessage(mid, actid int, topic string, getmid, step int, data event.JsonMap) event.INsqdMessage {
@@ -52,25 +52,30 @@ func (this *NsqEventBase) GetTopic() string {
 	return this.Topic
 }
 
+type NsqLogicModel struct {
+	*NsqEventBase
+}
+
 //所在协程的KEY 因为要放到Logic上运行
-func (this *NsqEventBase) KeyID() string {
+func (this *NsqLogicModel) KeyID() string {
 	if Service.Sconf.LogicConf.InitNum == 0 {
 		return util.NewStringInt(this.MemberID).ToString()
 	}
 	return util.NewStringInt(this.MemberID % Service.Sconf.LogicConf.InitNum).ToString()
 }
 
-//调用方法
-func (this *NsqEventBase) Run() {
-	this.NsqdLogicHander(this)
-}
+// //调用方法
+// func (this *NsqLogicBase) Run() {
+// 	this.NsqdLogicHander(this)
+// }
 
 //会回复消息的
-func (this *NsqEventBase) LogicRun(f func() int) {
+func (this *NsqLogicModel) LogicRun(f func(jsuser event.JsonMap) int) {
 	result := ConstantCode.Success
+	jsuser := make(event.JsonMap)
 	threads.Try(
 		func() {
-			result = f()
+			result = f(jsuser)
 		},
 		func(err interface{}) {
 			Logger.PFatal(err)
@@ -78,6 +83,7 @@ func (this *NsqEventBase) LogicRun(f func() int) {
 		},
 		func() {
 			this.Data["Result"] = result
+			this.Data["JsData"] = jsuser
 			msg := NewNsqdMessage(this.MemberID, this.ActionID, this.SendSID, this.SendID, 1, this.Data)
 			Service.NsqdEx.AddMsg(msg)
 		},
