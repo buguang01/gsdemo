@@ -21,6 +21,8 @@ type WebSocketModel struct {
 func (this *WebSocketModel) KeyID() string {
 	if Service.Sconf.LogicConf.InitNum == 0 {
 		return util.NewStringInt(this.MemberID).ToString()
+	} else if this.MemberID == 0 {
+		util.NewStringInt(Service.Sconf.LogicConf.InitNum).ToString()
 	}
 	return util.NewStringInt(this.MemberID % Service.Sconf.LogicConf.InitNum).ToString()
 }
