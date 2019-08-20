@@ -33,7 +33,7 @@ func (this *UpDataArgs) UpData() {
 }
 
 type DalModel struct {
-	event.SqlDataModel
+	event.SqlDataStructModel
 }
 
 func (this *DalModel) GetKeyID() int {

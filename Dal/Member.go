@@ -9,26 +9,46 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/buguang01/Logger"
 	"github.com/buguang01/bige/event"
-	"github.com/buguang01/bige/model"
 )
 
+/*
+bige是框架中用来生成SQL的tag
+select 是表示会做为查询的条件
+bigekey 是表示在更新的时候，不做为更新的字段；但是在插入的时候，会做为数据写入；
+- 是表示这个字段不参与保存
+*/
 type MemberMD struct {
-	MemberID   int       //用户ID
-	UserName   string    //
-	Pwd        string    //
-	DriveID    string    //
-	OStype     string    //
-	CreateIP   string    //
-	PlatFormID string    //
-	ChanID     string    //渠道ID
-	OpenID     string    //用户唯一标识
-	UnionID    string    //同一用户，对同一个微信开放平台下的不同应用，unionid是相同的
-	CreateTime time.Time //
-	LoginTime  time.Time
-	BanTime    time.Time //
-	ServerID   int       //
+	MemberID   int       `bige:"memberid,bigekey"` //用户ID
+	UserName   string    `bige:"username"`         //
+	Pwd        string    `bige:"pwd"`              //
+	DriveID    string    `bige:"driveid"`          //
+	OStype     string    `bige:"ostype"`           //
+	CreateIP   string    `bige:"createip"`         //
+	PlatFormID string    `bige:"platformid"`       //
+	ChanID     string    `bige:"chanid"`           //渠道ID
+	OpenID     string    `bige:"openid"`           //用户唯一标识
+	UnionID    string    `bige:"unionid"`          //同一用户，对同一个微信开放平台下的不同应用，unionid是相同的
+	CreateTime time.Time `bige:"createtime"`       //
+	LoginTime  time.Time `bige:"logintime"`        //
+	BanTime    time.Time `bige:"bantime"`          //
+	ServerID   int       `bige:"serverid"`         //
+}
+
+//表名
+func (this *MemberMD) GetTableName() string {
+	return "member"
+}
+
+//保存参数列表
+func (this *MemberMD) ParmArray() []interface{} {
+	return []interface{}{this.MemberID, this.UserName, this.Pwd, this.DriveID, this.OStype, this.CreateIP,
+		this.PlatFormID, this.ChanID, this.OpenID, this.UnionID, this.CreateTime, this.LoginTime, this.BanTime, this.ServerID}
+}
+
+//查询的参数列表
+func (this *MemberMD) QueryArray() []interface{} {
+	return []interface{}{}
 }
 
 func (md *MemberMD) LoadDB(rows *sql.Rows) {
@@ -39,8 +59,8 @@ func (md *MemberMD) LoadDB(rows *sql.Rows) {
 		&md.BanTime, &md.ServerID)
 }
 
-func (md *MemberMD) ToJson() map[string]interface{} {
-	resultjs := make(map[string]interface{})
+func (md *MemberMD) ToJson() event.JsonMap {
+	resultjs := make(event.JsonMap)
 	resultjs["MemberID"] = md.MemberID
 	resultjs["UserName"] = md.UserName
 	// resultjs["ChanID"] = md.ChanID
@@ -55,31 +75,14 @@ func (md *MemberMD) ToJson() map[string]interface{} {
 	return resultjs
 }
 
+func (this *MemberMD) Clone() *MemberMD {
+	result := *this
+
+	return &result
+}
+
 func MemberGetAll(db *sql.DB) *sql.Rows {
-	sqlstr := `
-SELECT 
- memberid
-,username
-,pwd
-,driveid
-,ostype
-,createip
-,platformid
-,chanid
-,openid
-,unionid
-,createtime
-,logintime
-,bantime
-,serverid
-FROM member;
-`
-	read, err := db.Query(sqlstr)
-	if err != nil {
-		Logger.PFatal(err)
-		panic(err)
-	}
-	return read
+	return event.DataGetByID(db, &MemberMD{})
 }
 
 func MemberGetMaxMemberID(db *sql.DB) int {
@@ -92,53 +95,11 @@ SELECT IFNULL(MAX(memberid),0) FROM member;
 	return result
 }
 
-func MemberUpData(conndb model.IConnDB, datamd event.DataDBModel) error {
-	md := datamd.(*MemberMD)
-	sqlstr := `
-	INSERT INTO member(
-		memberid,username,pwd,driveid
-		,ostype,createip,platformid,chanid
-		,openid,unionid,createtime,logintime
-		,bantime,serverid
-	) VALUES(
-		?,?,?,? ,?,?,?,? ,?,?,?,?	,?,?
-	)
-	ON DUPLICATE KEY UPDATE
-		username=values(username),
-		pwd=values(pwd),
-		driveid=values(driveid),
-		ostype=values(ostype),
-		createip=values(createip),
-		platformid=values(platformid),
-		chanid=values(chanid),
-		openid=values(openid),
-		unionid=values(unionid),
-		createtime=values(createtime),
-		logintime=values(logintime),
-		bantime=values(bantime),
-		serverid=values(serverid)
-
-	;
-	`
-	_, err := conndb.Exec(
-		sqlstr,
-		md.MemberID, md.UserName, md.Pwd, md.DriveID,
-		md.OStype, md.CreateIP, md.PlatFormID, md.ChanID,
-		md.OpenID, md.UnionID, md.CreateTime, md.LoginTime,
-		md.BanTime, md.ServerID)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 //UpDBMemberMD 写入用户信息
 func UpDBMemberMD(md *MemberMD) {
 	upmd := new(DalModel)
 	upmd.KeyID = md.MemberID
-	tmp := *md
-	upmd.DataDBModel = &tmp
-	upmd.SaveFun = MemberUpData
+	upmd.DataDBModel = md.Clone()
 	upmd.UpTime = SAVE_LV0
 	upmd.DataKey = fmt.Sprintf("member%d", md.MemberID)
 	Service.DBEx.AddMsg(upmd)
