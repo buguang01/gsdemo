@@ -5,8 +5,8 @@ import (
 	"GameService/Models"
 
 	"github.com/buguang01/bige/event"
-	"github.com/buguang01/bige/threads"
 	"github.com/buguang01/util"
+	"github.com/buguang01/util/threads"
 )
 
 //WsDomeEvent

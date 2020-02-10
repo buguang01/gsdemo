@@ -4,7 +4,7 @@ import (
 	"GameService/Code/ConstantCode"
 
 	"github.com/buguang01/Logger"
-	"github.com/buguang01/bige/threads"
+	"github.com/buguang01/util/threads"
 )
 
 //userLogicRun 用户逻辑运行,这应该还要加一个参数，也就是你的用户ID或用户对象
