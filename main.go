@@ -67,7 +67,7 @@ func main() {
 	services.WebSocketEx = modules.NewWebSocketModule(
 		modules.WebSocketSetIpPort(services.Sconf.WsAddr),
 		modules.WebSocketSetRoute(routes.WebSocketRoute),
-		modules.WebScoketSetOnlineFun()
+		modules.WebScoketSetOnlineFun(routes.WebScoketOnline),
 	)
 	services.GameEx.AddModule(
 		services.DBEx,
