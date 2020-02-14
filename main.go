@@ -1,7 +1,7 @@
 package main
 
 import (
-	"GameService/Flag"
+	"GameService/flags"
 	"GameService/routes"
 	"GameService/services"
 	"encoding/json"
@@ -23,7 +23,7 @@ func main() {
 		flag.Parse()
 	}
 
-	f, err := os.Open(*Flag.Flagc)
+	f, err := os.Open(*flags.Flagc)
 	if err != nil {
 		panic(err)
 	}
