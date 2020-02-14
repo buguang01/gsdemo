@@ -1,4 +1,4 @@
-package ActionCode
+package actioncode
 
 const (
 	Nsqd_Log = 979001 //服务器日志

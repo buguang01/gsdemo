@@ -1,4 +1,4 @@
-package ActionCode
+package actioncode
 
 //http的消息号定义
 const (

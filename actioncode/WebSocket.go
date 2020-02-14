@@ -1,4 +1,4 @@
-package ActionCode
+package actioncode
 
 //定义来自WebSocket的消息
 const (
