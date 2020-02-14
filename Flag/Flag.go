@@ -1,4 +1,4 @@
-package Flag
+package flag
 
 import (
 	"flag"

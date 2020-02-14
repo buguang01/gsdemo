@@ -10,7 +10,7 @@ import (
 
 type NsqResult struct {
 	messages.NsqdMessage
-	ResultCom int
+	ActionCom int
 	//数据
 	Data interface{} `json:"omitempty"`
 	//收到的消息数据，如果有需要返回的话一般建议包装在Data中
@@ -31,7 +31,7 @@ func NewNsqResult(msg messages.INsqMessageHandle, com int, v interface{}) (resul
 	md.SendSID = msg.GetTopic()
 	md.SendUserID = msg.GetSendUserID()
 	md.Data = v
-	md.ResultCom = com
+	md.ActionCom = com
 	result = md
 	return
 }
@@ -46,7 +46,7 @@ func NewNsqResultJSON(msg messages.INsqMessageHandle, com int, v H) (result mess
 	md.SendSID = msg.GetTopic()
 	md.SendUserID = msg.GetSendUserID()
 	md.Data = v
-	md.ResultCom = com
+	md.ActionCom = com
 	return md
 }
 
