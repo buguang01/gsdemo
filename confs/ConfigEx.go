@@ -1,4 +1,4 @@
-package conf
+package confs
 
 import (
 	"errors"
