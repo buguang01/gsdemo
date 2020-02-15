@@ -14,10 +14,6 @@ type NsqdListenEvent struct {
 	Data events.LogicListen
 }
 
-func (msg *NsqdListenEvent) GetAction() uint32 {
-	return msg.ActionID
-}
-
 //Nsq的回调
 func (msg *NsqdListenEvent) NsqDirectCall() {
 	msg.UserID = msg.Data.MemberID

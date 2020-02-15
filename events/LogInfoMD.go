@@ -1,6 +1,7 @@
 package events
 
 import (
+	"GameService/actioncode"
 	"GameService/services"
 	"encoding/json"
 	"time"
@@ -57,16 +58,12 @@ type NsqSendLogEventMsg struct {
 	Data LogInfoMD
 }
 
-func (msg *NsqSendLogEventMsg) GetAction() uint32 {
-	return msg.ActionID
-}
-
 //发到LogService的日志消息
 func sendNsqdLogMD(md *LogInfoMD) {
 	msg := &NsqSendLogEventMsg{
 		Data: *md,
 	}
-	msg.ActionID = 979001
+	msg.ActionID = actioncode.Nsqd_Log
 	msg.SendUserID = md.MID
 	msg.Topic = services.Sconf.LogServerID
 	services.NsqdEx.AddMsg(msg)

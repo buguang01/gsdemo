@@ -4,15 +4,13 @@ import (
 	"GameService/events"
 	"GameService/msgmodels"
 	"net/http"
+
+	"github.com/buguang01/bige/messages"
 )
 
 type WebListenEvent struct {
-	actionID uint32 `json:"ActionID"`
-	Data     events.LogicListen
-}
-
-func (msg *WebListenEvent) GetAction() uint32 {
-	return msg.actionID
+	messages.WebMessage
+	Data events.LogicListen
 }
 
 //HTTP的回调

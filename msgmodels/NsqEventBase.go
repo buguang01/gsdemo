@@ -17,10 +17,6 @@ type NsqResult struct {
 	// MsgData interface{}
 }
 
-func (msg *NsqResult) GetAction() uint32 {
-	return msg.ActionID
-}
-
 //自定义结构的返回
 //msg:收到的消息
 //com：处理完消息的返回码（错误码）
