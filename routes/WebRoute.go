@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"GameService/actioncode"
+	"GameService/events/webevents"
 	"net/http"
 
 	"github.com/buguang01/bige/messages"
@@ -11,7 +13,7 @@ var (
 )
 
 func init() {
-
+	WebRoute.SetRoute(actioncode.Nsqd_ListenUser, &webevents.WebListenEvent{})
 }
 
 func WebTimeout(webmsg messages.IHttpMessageHandle,
