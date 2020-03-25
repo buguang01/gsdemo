@@ -69,6 +69,9 @@ func main() {
 		modules.WebSocketSetRoute(routes.WebSocketRoute),
 		modules.WebScoketSetOnlineFun(routes.WebScoketOnline),
 	)
+	services.GameEx = modules.NewGameService(
+		modules.GameServiceSetSID(101),
+	)
 	services.GameEx.AddModule(
 		services.DBEx,
 		services.LogicEx,
