@@ -4,13 +4,13 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "go build win",
+            "label": "go build def",
             "type": "shell",
             "command": "go",
             "args": [
                 "build",
                 "-o",
-                "${workspaceRoot}/bin/GameS.exe"
+                "${workspaceRoot}/bin/"
             ],
             "group": {
                 "kind": "build",
@@ -24,7 +24,7 @@
             "args": [
                 "build",
                 "-o",
-                "${workspaceRoot}/bin/GameS"
+                "${workspaceRoot}/bin/"
             ],
             "options": {
                 "env": {
