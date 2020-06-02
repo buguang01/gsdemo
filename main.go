@@ -40,7 +40,13 @@ func main() {
 		Logger.PError(err, "")
 		return
 	}
-	services.RedisEx = model.NewRedisAccess(&services.Sconf.RedisConf)
+	services.RedisEx = model.NewRedisAccess(
+		model.RedisSetAddr(services.Sconf.RedisConf.Addr),
+		model.RedisSetAuth(services.Sconf.RedisConf.Auth),
+		model.RedisSetIndexDB(services.Sconf.RedisConf.Indexdb),
+		model.RedisSetMaxActive(services.Sconf.RedisConf.MaxActive),
+		model.RedisSetMaxIdle(services.Sconf.RedisConf.MaxIdle),
+	)
 	defer services.RedisEx.Close()
 	c := services.RedisEx.GetConn()
 	if err := c.Err(); err != nil {
@@ -72,6 +78,8 @@ func main() {
 	services.GameEx = modules.NewGameService(
 		modules.GameServiceSetSID(101),
 	)
+	services.GameEx.ServiceStopHander = ServiceStopHander
+	services.GameEx.ServiceStartHander = ServiceStartHander
 	services.GameEx.AddModule(
 		services.DBEx,
 		services.LogicEx,
@@ -80,30 +88,16 @@ func main() {
 		services.WebEx,
 		services.WebSocketEx,
 	)
-	InitData()
 	services.GameEx.Run()
 
 }
 
-//InitData 用来初始化服务器的其他东西
-//加载配置表
-//加载数据库数据
-//其他数据的加载
-//初始化一些信息
-//需要写入redis的操作等
-func InitData() {
-	// wg := new(sync.WaitGroup)
-	// wg.Add(2)
-	// go Manage.UserManageEx.Load(wg)
-	// Conf.InitLoad(wg)
-	// wg.Wait()
-	// Service.GoTreand.Go(Route.AutoTask)
+//当服务器被关掉时，先调用的方法
+func ServiceStopHander() {
 
-	// a := Models.HorselightModel{
-	// 	Text:  "test",
-	// 	Stime: util.GetCurrTimeSecond().Add(60 * time.Second).Unix(),
-	// 	Num:   10,
-	// }
-	// Manage.ServerEx.SetMsgHorselight(a)
-	// go http.ListenAndServe("0.0.0.0:6060", nil)
+}
+
+//当服务器所有服务都启动后，先调用的方法
+func ServiceStartHander() {
+
 }

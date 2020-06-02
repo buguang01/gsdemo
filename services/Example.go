@@ -30,11 +30,31 @@ type ServiceConf struct {
 	LogMode     Logger.LogMode  //日志模式
 	LogServerID string          //log服务器ID
 
+	// MysqlConf      MysqlConf //mysql配置
 	DBConf         model.MysqlConfigModel //Mysql管理器
-	RedisConf      model.RedisConfigModel //Redis管理器
+	RedisConf      RedisConf              //redis配置
 	NsqdAddr       []string               //nsqd地址组
 	NsqLookupdAddr []string               //lookup 地址组
 	WebAddr        string                 //Web的地址
 	WsAddr         string                 //Websocket 的地址
 
+}
+
+type MysqlConf struct {
+	Addr       string
+	User       string
+	Pwd        string
+	DBName     string
+	MaxOpenNum int //最大连接数
+	IdleNum    int //最大待机连接数
+
+}
+
+type RedisConf struct {
+	Addr        string        //连接字符串
+	Indexdb     int           //默认DB号
+	Auth        string        //连接密码
+	MaxIdle     int           //最大的空闲连接数，表示即使没有redis连接时依然可以保持N个空闲的连接，而不被清除，随时处于待命状态
+	MaxActive   int           //最大的激活连接数，表示同时最多有N个连接 ，为0事表示没有限制
+	IdleTimeout time.Duration //最大的空闲连接等待时间，超过此时间后，空闲连接将被关闭(秒)
 }
