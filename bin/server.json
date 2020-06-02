@@ -12,11 +12,12 @@
         "MaxLifetime": 600
     },
     "RedisConf": {
-        "ConAddr": "127.0.0.1:6379",
-        "MaxActive": 1000,
+        "Addr": "127.0.0.1:6379",
+        "Indexdb":0,
+        "Auth": "",
         "MaxIdle": 50,
-        "IdleTimeout": 600,
-        "Password": ""
+        "MaxActive": 1000,
+        "IdleTimeout": 600
     },
     "NsqdAddr": [
         "127.0.0.1:4150"
