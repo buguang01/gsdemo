@@ -16,7 +16,7 @@ func init() {
 }
 
 func WebScoketOnline(conn *messages.WebSocketModel) {
-	req := conn.Request()
+	req := conn.Conn.Request()
 	// Logger.PInfo("%v", req.Header)
 	//这个方法是用来拿IP的，因为会被https代理，所以RemoteAddr不一定拿到客户的IP；
 	//所以与你自己的运营沟通一下看看在哪里可以拿到IP；

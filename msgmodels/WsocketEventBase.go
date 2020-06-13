@@ -45,7 +45,7 @@ func WsocketTryRun(msg messages.IWebSocketMessageHandle, ws *messages.WebSocketM
 			if resultmsg != nil {
 				buff, err := services.WebSocketEx.RouteHandle.Marshal(msg.GetAction(), resultmsg)
 				if err == nil {
-					ws.Write(buff)
+					ws.Conn.Write(buff)
 				}
 			}
 		},
